@@ -21,5 +21,12 @@ class ChatRepository @Inject constructor(
         }
         chatDao.upsertAll(chats)
     }
+
+    suspend fun ensureChat(otherUserId: String): String {
+        val res = api.ensureChat(com.example.messengerlite.net.CreateChatWithRequest(otherUserId))
+        val chatId = res["chatId"] as? String ?: ""
+        sync()
+        return chatId
+    }
 }
 

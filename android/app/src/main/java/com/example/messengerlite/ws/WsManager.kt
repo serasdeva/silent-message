@@ -24,8 +24,10 @@ class WsManager @Inject constructor(
 ) {
     private var ws: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO)
+    private var onTyping: ((chatId: String, userId: String, isTyping: Boolean) -> Unit)? = null
 
-    fun connect() {
+    fun connect(onTypingCallback: ((String, String, Boolean) -> Unit)? = null) {
+        onTyping = onTypingCallback
         val token = tokenStore.accessToken() ?: return
         val req = Request.Builder()
             .url("${BuildConfig.WS_URL}/ws?token=$token")
@@ -54,6 +56,12 @@ class WsManager @Inject constructor(
                             delivered?.let { messageDao.markDelivered(listOf(id), it) }
                             read?.let { messageDao.markRead(listOf(id), it) }
                         }
+                    }
+                    if (obj.optString("type") == "typing") {
+                        val chatId = obj.getString("chatId")
+                        val userId = obj.getString("userId")
+                        val isTyping = obj.getBoolean("isTyping")
+                        onTyping?.invoke(chatId, userId, isTyping)
                     }
                 }
             }

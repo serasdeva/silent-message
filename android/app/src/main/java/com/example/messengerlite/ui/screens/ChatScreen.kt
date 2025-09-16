@@ -28,6 +28,9 @@ fun ChatScreen(chatId: String, vm: ChatViewModel = hiltViewModel()) {
     val msgs = vm.messages.collectAsState(emptyList())
     var text by remember { mutableStateOf("") }
     Column(Modifier.fillMaxSize().padding(8.dp)) {
+        if (vm.typing.value) {
+            Text("печатает…", modifier = Modifier.padding(4.dp))
+        }
         LazyColumn(Modifier.weight(1f)) {
             items(msgs.value) { m ->
                 val status = when {

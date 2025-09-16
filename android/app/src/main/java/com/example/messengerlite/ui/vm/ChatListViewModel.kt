@@ -13,5 +13,6 @@ import kotlinx.coroutines.launch
 class ChatListViewModel @Inject constructor(private val repo: ChatRepository) : ViewModel() {
     val chats: Flow<List<ChatEntity>> = repo.observeChats()
     fun refresh() { viewModelScope.launch { runCatching { repo.sync() } } }
+    fun ensureChat(otherUserId: String) { viewModelScope.launch { runCatching { repo.ensureChat(otherUserId) } } }
 }
 

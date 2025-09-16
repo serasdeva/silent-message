@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow as MutableState
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
@@ -20,6 +21,7 @@ class ChatViewModel @Inject constructor(
     private val ws: WsManager
 ) : ViewModel() {
     private val chatIdState = MutableStateFlow<String?>(null)
+    val typing = MutableState(false)
 
     val messages: Flow<List<MessageEntity>> = chatIdState.flatMapLatest { id ->
         if (id == null) kotlinx.coroutines.flow.flowOf(emptyList()) else repo.observeMessages(id)
@@ -28,7 +30,7 @@ class ChatViewModel @Inject constructor(
     fun setChat(chatId: String) {
         chatIdState.value = chatId
         viewModelScope.launch { repo.sync(chatId) }
-        ws.connect()
+        ws.connect { cid, _, isTyping -> if (cid == chatId) typing.value = isTyping }
     }
 
     fun send(body: String) {
