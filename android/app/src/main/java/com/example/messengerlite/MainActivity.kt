@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
 import com.example.messengerlite.ui.navigation.AppNavHost
+import com.example.messengerlite.ui.navigation.Routes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,6 +17,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val nav = rememberNavController()
             Surface(color = MaterialTheme.colorScheme.background) {
+                val data = intent?.data
+                if (data != null && data.host == "chat") {
+                    val chatId = data.getQueryParameter("chatId")
+                    if (!chatId.isNullOrBlank()) {
+                        nav.navigate(Routes.ChatList)
+                        // In a full impl we'd navigate to Chat(chatId)
+                    }
+                }
                 AppNavHost(nav)
             }
         }

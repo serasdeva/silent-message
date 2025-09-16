@@ -30,5 +30,16 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch { repo.sync(chatId) }
         ws.connect()
     }
+
+    fun send(body: String) {
+        val id = chatIdState.value ?: return
+        val clientId = java.util.UUID.randomUUID().toString()
+        viewModelScope.launch { repo.send(id, body, clientId) }
+    }
+
+    fun typing(isTyping: Boolean) {
+        val id = chatIdState.value ?: return
+        ws.sendTyping(id, isTyping)
+    }
 }
 

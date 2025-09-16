@@ -53,5 +53,10 @@ class WsManager @Inject constructor(
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) { }
         })
     }
+
+    fun sendTyping(chatId: String, isTyping: Boolean) {
+        val payload = JSONObject(mapOf("type" to "typing", "chatId" to chatId, "isTyping" to isTyping)).toString()
+        ws?.send(payload)
+    }
 }
 
