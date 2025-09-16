@@ -30,7 +30,12 @@ fun ChatScreen(chatId: String, vm: ChatViewModel = hiltViewModel()) {
     Column(Modifier.fillMaxSize().padding(8.dp)) {
         LazyColumn(Modifier.weight(1f)) {
             items(msgs.value) { m ->
-                ListItem(headlineContent = { Text(m.body) }, supportingContent = { Text(m.senderId.takeLast(4)) })
+                val status = when {
+                    m.readAt != null -> "read"
+                    m.deliveredAt != null -> "delivered"
+                    else -> "sent"
+                }
+                ListItem(headlineContent = { Text(m.body) }, supportingContent = { Text("${m.senderId.takeLast(4)} • $status") })
             }
         }
         Row {

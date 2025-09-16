@@ -18,6 +18,7 @@ private val Context.dataStore by preferencesDataStore(name = "auth")
 class TokenStore @Inject constructor(@ApplicationContext private val context: Context) {
     private val ACCESS = stringPreferencesKey("access")
     private val REFRESH = stringPreferencesKey("refresh")
+    private val USER_ID = stringPreferencesKey("user_id")
 
     fun setTokens(access: String, refresh: String) = runBlocking {
         context.dataStore.edit { pref ->
@@ -26,9 +27,11 @@ class TokenStore @Inject constructor(@ApplicationContext private val context: Co
         }
     }
 
-    fun clear() = runBlocking { context.dataStore.edit { it.remove(ACCESS); it.remove(REFRESH) } }
+    fun clear() = runBlocking { context.dataStore.edit { it.remove(ACCESS); it.remove(REFRESH); it.remove(USER_ID) } }
 
     fun accessToken(): String? = runBlocking { context.dataStore.data.first()[ACCESS] }
     fun refreshToken(): String? = runBlocking { context.dataStore.data.first()[REFRESH] }
+    fun userId(): String? = runBlocking { context.dataStore.data.first()[USER_ID] }
+    fun setUserId(userId: String) = runBlocking { context.dataStore.edit { it[USER_ID] = userId } }
 }
 

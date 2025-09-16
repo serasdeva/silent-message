@@ -17,7 +17,7 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides @Singleton
     fun provideDb(@ApplicationContext ctx: Context): AppDatabase =
-        Room.databaseBuilder(ctx, AppDatabase::class.java, "messenger.db").build()
+        Room.databaseBuilder(ctx, AppDatabase::class.java, "messenger.db").fallbackToDestructiveMigration().build()
 
     @Provides fun chatDao(db: AppDatabase): ChatDao = db.chatDao()
     @Provides fun messageDao(db: AppDatabase): MessageDao = db.messageDao()

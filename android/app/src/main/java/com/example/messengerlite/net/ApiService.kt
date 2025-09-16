@@ -40,5 +40,8 @@ interface ApiService {
 
     @POST("/messages/receipts")
     suspend fun sendReceipts(@Body body: ReceiptsRequest): Map<String, Any>
+
+    @POST("/devices")
+    suspend fun registerDevice(@Body body: Map<String, String>): Map<String, Any>
 }
 

@@ -28,5 +28,11 @@ interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(item: MessageEntity)
+
+    @Query("UPDATE messages SET deliveredAt = :ts WHERE id IN (:ids)")
+    suspend fun markDelivered(ids: List<String>, ts: Long)
+
+    @Query("UPDATE messages SET readAt = :ts WHERE id IN (:ids)")
+    suspend fun markRead(ids: List<String>, ts: Long)
 }
 

@@ -11,10 +11,32 @@ import com.example.messengerlite.MainActivity
 import com.example.messengerlite.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.example.messengerlite.BuildConfig
+import com.example.messengerlite.net.ApiService
+import com.example.messengerlite.store.TokenStore
+import com.squareup.moshi.Moshi
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 class MessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
-        // TODO: send to backend device endpoint
+        // Best-effort registration in background
+        Thread {
+            try {
+                val tokenStore = TokenStore(applicationContext)
+                val auth = Interceptor { chain ->
+                    val at = tokenStore.accessToken()
+                    val req = if (!at.isNullOrEmpty()) chain.request().newBuilder().addHeader("Authorization", "Bearer $at").build() else chain.request()
+                    chain.proceed(req)
+                }
+                val client = OkHttpClient.Builder().addInterceptor(auth).build()
+                val retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(client).addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build())).build()
+                val api = retrofit.create(ApiService::class.java)
+                api.registerDevice(mapOf("fcmToken" to token))
+            } catch (_: Throwable) {}
+        }.start()
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

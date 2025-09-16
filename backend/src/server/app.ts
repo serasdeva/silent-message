@@ -6,6 +6,7 @@ import { healthRouter } from './routes/health';
 import { authRouter } from './routes/auth';
 import { chatsRouter } from './routes/chats';
 import { messagesRouter } from './routes/messages';
+import { devicesRouter } from './routes/devices';
 
 export const createApp = (config: ReturnType<typeof getConfig>) => {
   const app = express();
@@ -17,6 +18,7 @@ export const createApp = (config: ReturnType<typeof getConfig>) => {
   app.use('/auth', authRouter(config));
   app.use('/chats', chatsRouter(config));
   app.use('/messages', messagesRouter(config));
+  app.use('/devices', devicesRouter(config));
 
   app.get('/', (_req, res) => res.json({ ok: true }));
 

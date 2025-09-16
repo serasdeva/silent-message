@@ -27,6 +27,7 @@ class AuthViewModel @Inject constructor(
             val res = runCatching { api.verifyOtp(OtpVerifyRequest(requestId = "stub", code = code)) }.getOrNull()
             if (res != null) {
                 tokenStore.setTokens(res.accessToken, res.refreshToken)
+                tokenStore.setUserId(res.user.id)
                 onSuccess()
             }
         }

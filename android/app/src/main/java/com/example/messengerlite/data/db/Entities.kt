@@ -16,6 +16,8 @@ data class MessageEntity(
     val senderId: String,
     val body: String,
     val createdAt: Long,
-    val serverSeq: Long
+    val serverSeq: Long,
+    val deliveredAt: Long? = null,
+    val readAt: Long? = null
 )
 

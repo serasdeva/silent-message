@@ -41,5 +41,9 @@ class ChatViewModel @Inject constructor(
         val id = chatIdState.value ?: return
         ws.sendTyping(id, isTyping)
     }
+
+    fun markRead(ids: List<String>) {
+        ws.sendReceiptRead(ids)
+    }
 }
 

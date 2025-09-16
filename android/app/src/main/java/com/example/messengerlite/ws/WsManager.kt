@@ -46,6 +46,15 @@ class WsManager @Inject constructor(
                         )
                         scope.launch { messageDao.upsert(entity) }
                     }
+                    if (obj.optString("type") == "receipt:update") {
+                        val id = obj.getString("messageId")
+                        val delivered = if (obj.has("deliveredAt")) obj.getLong("deliveredAt") else null
+                        val read = if (obj.has("readAt")) obj.getLong("readAt") else null
+                        scope.launch {
+                            delivered?.let { messageDao.markDelivered(listOf(id), it) }
+                            read?.let { messageDao.markRead(listOf(id), it) }
+                        }
+                    }
                 }
             }
 
@@ -56,6 +65,16 @@ class WsManager @Inject constructor(
 
     fun sendTyping(chatId: String, isTyping: Boolean) {
         val payload = JSONObject(mapOf("type" to "typing", "chatId" to chatId, "isTyping" to isTyping)).toString()
+        ws?.send(payload)
+    }
+
+    fun sendReceiptDelivered(id: String) {
+        val payload = JSONObject(mapOf("type" to "receipt", "receiptType" to "delivered", "messageIds" to listOf(id))).toString()
+        ws?.send(payload)
+    }
+
+    fun sendReceiptRead(ids: List<String>) {
+        val payload = JSONObject(mapOf("type" to "receipt", "receiptType" to "read", "messageIds" to ids)).toString()
         ws?.send(payload)
     }
 }
