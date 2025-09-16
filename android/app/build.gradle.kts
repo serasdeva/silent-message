@@ -16,6 +16,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
+        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080\"")
+        buildConfigField("String", "WS_URL", "\"ws://10.0.2.2:8080\"")
     }
 
     buildTypes {
@@ -76,6 +78,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
     // WebSocket (okhttp)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -89,6 +93,9 @@ dependencies {
 
     // WebRTC
     implementation("org.webrtc:google-webrtc:1.0.32006")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
