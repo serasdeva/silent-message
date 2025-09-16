@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: messenger
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/00_schema.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-07-13T01-46-15Z
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./minio/data:/data
+
+  coturn:
+    image: instrumentisto/coturn:4.6.2
+    network_mode: "host"
+    environment:
+      - TURN_USERNAME=turnuser
+      - TURN_PASSWORD=turnpass
+    command: ["-n", "--no-cli", "--no-tls", "--no-dtls", "--listening-port", "3478", "--realm", "messenger.local"]
+
+  backend:
+    build: ../backend
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: postgres://app:app@postgres:5432/messenger
+      REDIS_URL: redis://redis:6379/0
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      CLIENT_ORIGIN: http://localhost:5173
+      NODE_ENV: development
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - minio
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+
