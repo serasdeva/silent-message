@@ -3,6 +3,8 @@ import { jwtAuth, AuthenticatedRequest } from '../middleware/auth';
 import { getConfig } from '../config';
 import { store } from '../store/inmem';
 import { getIo } from '../ws_singleton';
+import { sendToUserRaw } from '../raw_ws_singleton';
+import { attachRawWebSocket } from '../ws_raw';
 
 export const messagesRouter = (config: ReturnType<typeof getConfig>) => {
   const r = Router();
@@ -19,6 +21,7 @@ export const messagesRouter = (config: ReturnType<typeof getConfig>) => {
     const io = getIo();
     for (const member of chat.members) {
       io.to(`user:${member}`).emit('message:new', { message: msg });
+      sendToUserRaw(member, { type: 'message:new', message: msg });
     }
     res.json({ messageId: msg.id, serverSeq: msg.serverSeq, createdAt: msg.createdAt });
   });
