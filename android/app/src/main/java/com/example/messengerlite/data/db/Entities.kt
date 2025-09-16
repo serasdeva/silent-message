@@ -21,3 +21,12 @@ data class MessageEntity(
     val readAt: Long? = null
 )
 
+@Entity(tableName = "outbox")
+data class OutboxMessageEntity(
+    @PrimaryKey val clientId: String,
+    val chatId: String,
+    val body: String,
+    val createdAt: Long,
+    val attempts: Int = 0
+)
+

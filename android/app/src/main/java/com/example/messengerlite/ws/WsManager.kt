@@ -61,7 +61,10 @@ class WsManager @Inject constructor(
                         val chatId = obj.getString("chatId")
                         val userId = obj.getString("userId")
                         val isTyping = obj.getBoolean("isTyping")
-                        onTyping?.invoke(chatId, userId, isTyping)
+                        val me = tokenStore.userId()
+                        if (userId != null && userId != me) {
+                            onTyping?.invoke(chatId, userId, isTyping)
+                        }
                     }
                 }
             }

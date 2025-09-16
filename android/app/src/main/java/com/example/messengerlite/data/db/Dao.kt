@@ -34,5 +34,23 @@ interface MessageDao {
 
     @Query("UPDATE messages SET readAt = :ts WHERE id IN (:ids)")
     suspend fun markRead(ids: List<String>, ts: Long)
+
+    @Query("SELECT id FROM messages WHERE chatId = :chatId AND readAt IS NULL AND senderId != :me LIMIT 100")
+    suspend fun unreadIdsForChat(chatId: String, me: String): List<String>
+}
+
+@Dao
+interface OutboxDao {
+    @Query("SELECT * FROM outbox ORDER BY createdAt ASC")
+    suspend fun all(): List<OutboxMessageEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(item: OutboxMessageEntity)
+
+    @Query("DELETE FROM outbox WHERE clientId = :clientId")
+    suspend fun delete(clientId: String)
+
+    @Query("UPDATE outbox SET attempts = attempts + 1 WHERE clientId = :clientId")
+    suspend fun incAttempts(clientId: String)
 }
 

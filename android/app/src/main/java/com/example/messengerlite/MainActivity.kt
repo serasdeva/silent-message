@@ -21,8 +21,7 @@ class MainActivity : ComponentActivity() {
                 if (data != null && data.host == "chat") {
                     val chatId = data.getQueryParameter("chatId")
                     if (!chatId.isNullOrBlank()) {
-                        nav.navigate(Routes.ChatList)
-                        // In a full impl we'd navigate to Chat(chatId)
+                        nav.navigate("chat/$chatId")
                     }
                 }
                 AppNavHost(nav)

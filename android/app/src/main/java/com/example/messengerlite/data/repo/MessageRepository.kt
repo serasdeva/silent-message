@@ -1,6 +1,8 @@
 package com.example.messengerlite.data.repo
 
 import com.example.messengerlite.data.db.MessageDao
+import com.example.messengerlite.data.db.OutboxDao
+import com.example.messengerlite.data.db.OutboxMessageEntity
 import com.example.messengerlite.data.db.MessageEntity
 import com.example.messengerlite.net.ApiService
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class MessageRepository @Inject constructor(
     private val api: ApiService,
-    private val messageDao: MessageDao
+    private val messageDao: MessageDao,
+    private val outboxDao: OutboxDao
 ) {
     fun observeMessages(chatId: String): Flow<List<MessageEntity>> = messageDao.observeMessages(chatId)
 
@@ -31,8 +34,11 @@ class MessageRepository @Inject constructor(
     }
 
     suspend fun send(chatId: String, body: String, clientId: String) {
-        api.sendMessage(com.example.messengerlite.net.CreateMessageRequest(chatId, clientId, body))
-        // optimistic insert will be handled after fetch or WS, optional here
+        try {
+            api.sendMessage(com.example.messengerlite.net.CreateMessageRequest(chatId, clientId, body))
+        } catch (_: Throwable) {
+            outboxDao.upsert(OutboxMessageEntity(clientId, chatId, body, System.currentTimeMillis()))
+        }
     }
 }
 
