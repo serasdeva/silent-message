@@ -30,7 +30,6 @@ export class InMemoryStore {
   }
 
   getOrCreateChatForUsers(a: string, b: string): Chat {
-    const key = [a, b].sort().join(':');
     for (const chat of this.chats.values()) {
       if (chat.members.length === 2 && new Set(chat.members).size === 2 && chat.members.includes(a) && chat.members.includes(b)) {
         return chat;
