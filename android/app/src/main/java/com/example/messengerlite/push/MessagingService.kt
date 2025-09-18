@@ -34,7 +34,9 @@ class MessagingService : FirebaseMessagingService() {
                 val client = OkHttpClient.Builder().addInterceptor(auth).build()
                 val retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(client).addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build())).build()
                 val api = retrofit.create(ApiService::class.java)
-                api.registerDevice(mapOf("fcmToken" to token))
+                kotlinx.coroutines.runBlocking {
+                    api.registerDevice(mapOf("fcmToken" to token))
+                }
             } catch (_: Throwable) {}
         }.start()
     }
