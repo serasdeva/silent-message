@@ -38,6 +38,16 @@ Services
 
 Security
 --------
+- CI (GitHub Actions)
+---------------------
+
+- JDK 17 via `actions/setup-java`
+- Android SDK via `android-actions/setup-android`
+- Gradle wrapper is generated in CI if missing: `gradle/gradle-build-action@v3` with `wrapper` task.
+- Jobs:
+  - build: `./gradlew assembleDebug` and unit tests
+  - connected-tests (macOS + emulator): `connectedDebugAndroidTest`
+
 
 - Dev-only defaults. Replace secrets in `.env` for staging/production.
 - TLS termination should be handled by an ingress/proxy in non-dev environments.
