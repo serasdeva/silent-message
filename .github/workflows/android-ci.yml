@@ -25,6 +25,9 @@ jobs:
       - name: Lint
         working-directory: backend
         run: npm run lint
+      - name: Unit tests
+        working-directory: backend
+        run: npm test
 
   build:
     runs-on: ubuntu-latest
