@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
 
 @Composable
 fun ChatListScreen(vm: ChatListViewModel = hiltViewModel(), onOpenChat: (String) -> Unit = {}) {
@@ -37,12 +38,11 @@ fun ChatListScreen(vm: ChatListViewModel = hiltViewModel(), onOpenChat: (String)
             ListItem(
                 headlineContent = { Text("Chat ${c.id.takeLast(4)}") },
                 supportingContent = { Text("created ${c.createdAt}") },
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 8.dp).clickable { onOpenChat(c.id) },
                 overlineContent = { },
                 trailingContent = { },
                 leadingContent = { }
             )
-            androidx.compose.foundation.clickable { onOpenChat(c.id) }
         }
     }
 }

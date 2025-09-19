@@ -35,6 +35,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -43,6 +44,15 @@ android {
 
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -58,6 +68,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3:1.2.1")
+    // Material Components (XML themes like Theme.Material3.*)
+    implementation("com.google.android.material:material:1.12.0")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -91,8 +103,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-messaging-ktx")
 
-    // WebRTC
-    implementation("org.webrtc:google-webrtc:1.0.32006")
+    
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")

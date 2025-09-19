@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.messengerlite.data.db.AppDatabase
 import com.example.messengerlite.data.db.ChatDao
+import com.example.messengerlite.data.db.OutboxDao
 import com.example.messengerlite.data.db.MessageDao
 import dagger.Module
 import dagger.Provides
@@ -21,5 +22,6 @@ object DatabaseModule {
 
     @Provides fun chatDao(db: AppDatabase): ChatDao = db.chatDao()
     @Provides fun messageDao(db: AppDatabase): MessageDao = db.messageDao()
+    @Provides fun outboxDao(db: AppDatabase): OutboxDao = db.outboxDao()
 }
 
