@@ -1,6 +1,5 @@
-import express from 'express';
+import express, { json, urlencoded } from 'express';
 import cors from 'cors';
-import { json, urlencoded } from 'express';
 import { getConfig } from './config';
 import { healthRouter } from './routes/health';
 import { authRouter } from './routes/auth';
